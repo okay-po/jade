@@ -54,7 +54,7 @@
     <input id="playerNameInput" type="text" maxlength="14" autocomplete="nickname" placeholder="YOUR NAME" aria-label="Player name" />
     <span id="modeHint" class="mode-label">1. SELECT RUN MODE</span>
     <div class="choice-row">
-      <button type="button" class="run-mode" data-run-mode="normal">NORMAL · 5 FLOORS</button>
+      <button type="button" class="run-mode" data-run-mode="normal">NORMAL · 10 FLOORS</button>
       <button type="button" class="run-mode endless" data-run-mode="endless">ENDLESS · NO FINAL FLOOR</button>
     </div>
     <span class="mode-label">2. SELECT CONTROLS</span>
@@ -84,7 +84,7 @@ const keys={}, mouse={x:W/2,y:H/2,down:false};let mobileFire=false,mobileMove={x
 
 
 // Original game: a compact, arcade dungeon crawler with pixel-drawn food foes.
-const game={floor:1,maxFloor:5,state:'title',mode:'normal',modeChosen:true,time:0,shake:0,score:0,kills:0,needProduce:0,collected:0,notice:'',noticeT:0,exit:null,map:[],player:null,enemies:[],bullets:[],drops:[],crates:[],particles:[],decor:[],spawnClock:0,weapon:{level:1,damage:1,fireRate:1,spread:1,ammoIndex:0,specialCool:0,specialMax:9,specialFlash:0},skill:{cool:0,max:7,flash:0},upgradeOptions:[],leaderboard:[],scoreSaved:false,theme:null,controlMode:null,playerName:'',nutritionQuizFloor:0,quiz:null,character:'broccoli',characterChosen:false,finalRank:null,endlessLeaderboard:[],endlessScoreSaved:false,endlessFinalRank:null,upgradeChests:[],endlessSpawnClock:0,appleTrees:[],ambient:[],camera:{x:0,y:0}};
+const game={floor:1,maxFloor:10,state:'title',mode:'normal',modeChosen:true,time:0,shake:0,score:0,kills:0,needProduce:0,collected:0,notice:'',noticeT:0,exit:null,map:[],player:null,enemies:[],bullets:[],drops:[],crates:[],particles:[],decor:[],spawnClock:0,weapon:{level:1,damage:1,fireRate:1,spread:1,ammoIndex:0,specialCool:0,specialMax:9,specialFlash:0},skill:{cool:0,max:7,flash:0},upgradeOptions:[],leaderboard:[],scoreSaved:false,theme:null,controlMode:null,playerName:'',nutritionQuizFloor:0,quiz:null,character:'broccoli',characterChosen:false,finalRank:null,endlessLeaderboard:[],endlessScoreSaved:false,endlessFinalRank:null,upgradeChests:[],endlessSpawnClock:0,appleTrees:[],groundMessage:null,ambient:[],camera:{x:0,y:0}};
 const palette={wall:'#4d6b4d', wallDark:'#2e482f', floor:'#23472a', grout:'#3d6a3c', cream:'#eaffc8', lime:'#a8e986', pink:'#9dd16d', orange:'#badb7b', gold:'#d9eb83', red:'#78b866', blue:'#a9d889', dark:'#0b2010'};
 const healthyAmmo=['pea','carrot','berry','apple'];
 const ammoColors={pea:'#91df72',carrot:'#ffad50',berry:'#bd83f3',apple:'#f36b62',goldenCarrot:'#ffc857'};
@@ -133,19 +133,28 @@ const floorThemes=[
  {name:'DEWY MEADOWS',wall:'#5d7d80',wallDark:'#365458',floorA:'#3b7d57',floorB:'#4b9064',edge:'#b5e6a0',grass:true},
  {name:'VERDANT GROTTO',wall:'#39645b',wallDark:'#223e3d',floorA:'#347843',floorB:'#438a4e',edge:'#a4d879',grass:true},
  {name:'CLOVER GROVE',wall:'#64516f',wallDark:'#42374d',floorA:'#477843',floorB:'#55884c',edge:'#d6b979',grass:true},
- {name:'SUNLIT FIELDS',wall:'#76634a',wallDark:'#4a4132',floorA:'#5c853c',floorB:'#6c9646',edge:'#e1cf7d',grass:true}
+ {name:'SUNLIT FIELDS',wall:'#76634a',wallDark:'#4a4132',floorA:'#5c853c',floorB:'#6c9646',edge:'#e1cf7d',grass:true},
+ {name:'FERNWOOD HOLLOW',wall:'#4e6b50',wallDark:'#2d4935',floorA:'#2f7040',floorB:'#3d8249',edge:'#8fca72',grass:true},
+ {name:'ORCHARD TRAIL',wall:'#735b43',wallDark:'#47392d',floorA:'#527b38',floorB:'#638c43',edge:'#d8cf7c',grass:true},
+ {name:'WILDFLOWER RISE',wall:'#6d5b72',wallDark:'#463c4d',floorA:'#487b4a',floorB:'#5a8d55',edge:'#d8a6c9',grass:true},
+ {name:'RAINLEAF MARSH',wall:'#476661',wallDark:'#2c4744',floorA:'#327154',floorB:'#408361',edge:'#8ed0a1',grass:true},
+ {name:'HARVEST GROVE',wall:'#766a46',wallDark:'#4a432f',floorA:'#68863b',floorB:'#789844',edge:'#ead47e',grass:true}
 ];
 const floorLayouts=[
- // Floor 1: an old cellar with a forked route.
  [{x:2,y:2,w:7,h:6},{x:12,y:2,w:7,h:5},{x:22,y:2,w:8,h:6},{x:4,y:11,w:8,h:5},{x:16,y:10,w:7,h:6},{x:26,y:11,w:4,h:5}],
- // Floor 2: a wide, icy storage depot.
  [{x:2,y:2,w:6,h:5},{x:11,y:2,w:7,h:5},{x:22,y:2,w:8,h:5},{x:3,y:10,w:6,h:6},{x:13,y:10,w:7,h:4},{x:23,y:10,w:7,h:6}],
- // Floor 3: a greenhouse-shaped dungeon with a side entrance.
  [{x:2,y:6,w:6,h:7},{x:3,y:2,w:5,h:3},{x:11,y:2,w:6,h:5},{x:21,y:2,w:7,h:5},{x:11,y:10,w:6,h:6},{x:21,y:10,w:7,h:6}],
- // Floor 4: long candy halls split by a lower arcade.
  [{x:2,y:2,w:6,h:6},{x:10,y:2,w:5,h:5},{x:18,y:2,w:5,h:6},{x:25,y:2,w:5,h:5},{x:4,y:11,w:7,h:5},{x:14,y:10,w:6,h:6},{x:25,y:11,w:5,h:5}],
- // Floor 5: the compact, dangerous center of the pantry.
- [{x:2,y:7,w:6,h:6},{x:10,y:3,w:6,h:5},{x:18,y:2,w:6,h:5},{x:25,y:4,w:5,h:6},{x:10,y:12,w:6,h:4},{x:19,y:11,w:6,h:5},{x:26,y:12,w:4,h:4}]
+ [{x:2,y:7,w:6,h:6},{x:10,y:3,w:6,h:5},{x:18,y:2,w:6,h:5},{x:25,y:4,w:5,h:6},{x:10,y:12,w:6,h:4},{x:19,y:11,w:6,h:5},{x:26,y:12,w:4,h:4}],
+ [{x:2,y:2,w:6,h:5},{x:10,y:2,w:6,h:6},{x:20,y:2,w:5,h:5},{x:27,y:3,w:3,h:6},{x:3,y:11,w:6,h:5},{x:12,y:10,w:7,h:6},{x:23,y:11,w:7,h:5}],
+ [{x:2,y:7,w:6,h:6},{x:2,y:2,w:6,h:3},{x:11,y:2,w:6,h:5},{x:21,y:2,w:8,h:5},{x:11,y:11,w:6,h:5},{x:21,y:10,w:8,h:6}],
+ [{x:2,y:2,w:6,h:6},{x:11,y:3,w:6,h:4},{x:20,y:2,w:5,h:6},{x:27,y:2,w:3,h:7},{x:4,y:11,w:7,h:5},{x:15,y:10,w:5,h:6},{x:24,y:11,w:6,h:5}],
+ [{x:2,y:4,w:5,h:7},{x:10,y:2,w:6,h:5},{x:19,y:2,w:8,h:5},{x:10,y:11,w:6,h:5},{x:20,y:10,w:5,h:6},{x:27,y:11,w:3,h:5}],
+ [{x:2,y:2,w:6,h:5},{x:11,y:2,w:5,h:5},{x:19,y:2,w:5,h:5},{x:26,y:2,w:4,h:6},{x:3,y:11,w:6,h:5},{x:12,y:10,w:7,h:6},{x:23,y:10,w:7,h:6}]
+];
+const floorEnemyPools=[
+ [0,1,2,6],[3,5,8,9],[10,11,7,13],[0,4,6,12],[1,2,3,8],
+ [5,9,10,11],[12,13,0,7],[4,6,1,3],[8,5,2,10],[13,12,9,11]
 ];
 let rooms=[];
 function makeOpenWorldMap(){
@@ -169,16 +178,17 @@ function addAppleTree(x,y){game.appleTrees.push({x,y,r:15,seed:randi(0,9999)})}
 function randomTreePoint(minDistance=0){let p=game.player||{x:worldCols()*T/2,y:worldRows()*T/2};for(let i=0;i<100;i++){let x=randi(2,worldCols()-3)*T+20,y=randi(2,worldRows()-3)*T+20;if(!wallAt(x,y)&&dist({x,y},p)>minDistance&&!game.appleTrees.some(t=>Math.hypot(x-t.x,y-t.y)<58))return{x,y};}return{x:4*T+20,y:4*T+20}}
 
 function resetFloor(){
- game.map=makeMap();game.camera.x=0;game.camera.y=0;game.enemies=[];game.bullets=[];game.drops=[];game.crates=[];game.upgradeChests=[];game.appleTrees=[];game.particles=[];game.decor=[];seedAmbient();game.kills=0;game.collected=0;game.needProduce=Math.min(2+game.floor,8);
+ game.map=makeMap();game.camera.x=0;game.camera.y=0;game.groundMessage=null;game.enemies=[];game.bullets=[];game.drops=[];game.crates=[];game.upgradeChests=[];game.appleTrees=[];game.particles=[];game.decor=[];seedAmbient();game.kills=0;game.collected=0;game.needProduce=Math.min(2+game.floor,8);
  let startRoom=rooms[0],exitRoom=rooms[rooms.length-1];game.exit={x:(exitRoom.x+Math.floor(exitRoom.w/2))*T+20,y:(exitRoom.y+Math.floor(exitRoom.h/2))*T+20,open:false};
  game.player={x:(startRoom.x+Math.floor(startRoom.w/2))*T+20,y:(startRoom.y+Math.floor(startRoom.h/2))*T+20,r:12,hp:6,maxHp:6,inv:0,shoot:0,angle:0,walk:0};game.skill.cool=0;game.skill.flash=0;
  if(game.mode==='endless'){
-  game.player.x=Math.floor(worldCols()/2)*T+20;game.player.y=Math.floor(worldRows()/2)*T+20;game.camera.x=clamp(game.player.x-W/2,0,Math.max(0,worldCols()*T-W));game.camera.y=clamp(game.player.y-H/2,0,Math.max(0,worldRows()*T-H));game.exit=null;game.needProduce=0;
+  game.player.x=Math.floor(worldCols()/2)*T+20;game.player.y=Math.floor(worldRows()/2)*T+20;game.camera.x=clamp(game.player.x-W/2,0,Math.max(0,worldCols()*T-W));game.camera.y=clamp(game.player.y-H/2,0,Math.max(0,worldRows()*T-H));game.exit=null;game.needProduce=0;game.groundMessage={x:Math.floor(worldCols()/2)*T+20,y:(Math.floor(worldRows()/2)+6)*T+20};
   for(let i=0;i<42;i++){let tree=randomTreePoint(150);addAppleTree(tree.x,tree.y);}
   for(let i=0;i<28;i++){let p=randomEndlessPoint(180);spawnEnemy(p.x,p.y,randi(0,13));}let bp=randomEndlessPoint(340);spawnBoss(bp.x,bp.y);for(let i=0;i<4;i++)spawnEndlessChest();for(let i=0;i<280;i++){let p=pointInRoom(startRoom);game.decor.push({x:p.x,y:p.y,type:i%3});}game.endlessSpawnClock=.8;game.notice='ENDLESS OPEN WORLD — NO EXIT, NO FINAL FLOOR';game.noticeT=4;game.state='playing';return;
  }
+ let signRoom=rooms[1]||startRoom;game.groundMessage={x:(signRoom.x+Math.floor(signRoom.w/2))*T+20,y:(signRoom.y+Math.floor(signRoom.h/2))*T+20};
  let treeRooms=rooms.slice(1,-1);for(let i=0;i<Math.min(4,treeRooms.length);i++){let tree=pointInRoom(treeRooms[i]);if(dist(tree,game.player)>130)addAppleTree(tree.x,tree.y);}
- let pool=rooms.slice(1,-1),n=Math.min(4+game.floor*3,30);for(let i=0;i<n;i++){let p=pointInRoom(pool[i%pool.length]);spawnEnemy(p.x,p.y,(i*3+game.floor*2)%14)}
+ let pool=rooms.slice(1,-1),n=Math.min(4+game.floor*3,30),enemyPool=floorEnemyPools[(game.floor-1)%floorEnemyPools.length];for(let i=0;i<n;i++){let p=pointInRoom(pool[i%pool.length]);spawnEnemy(p.x,p.y,enemyPool[i%enemyPool.length])}
  let bossPoint=pointInRoom(pool[pool.length-1]),floorBoss=spawnBoss(bossPoint.x,bossPoint.y);let crateRooms=rooms.slice(1,-1);for(let i=0;i<game.needProduce;i++){let p=pointInRoom(crateRooms[i%crateRooms.length]);game.crates.push({x:p.x,y:p.y,r:15,open:false,kind:i%2?'fruit':'veg'});}for(let i=0;i<72;i++){let p=pointInRoom(rooms[i%rooms.length]);game.decor.push({x:p.x,y:p.y,type:i%3});}
  game.notice=`${game.mode==='endless'?'ENDLESS':'FLOOR'} ${game.floor}: ${game.theme.name} — ENEMIES LV.${game.floor} · BOSS: ${floorBoss.name}`;game.noticeT=3.2;game.state='playing';
 }
@@ -207,13 +217,13 @@ function spawnEnemy(x,y,type){
 }
 function spawnBoss(x,y){
  const bosses=[
-  {name:'BURGER BARON',color:'#f5a449'},
-  {name:'SODA SULTAN',color:'#70cfff'},
-  {name:'DONUT DREAD',color:'#f383b1'},
-  {name:'PIZZA TYRANT',color:'#ffc65a'},
-  {name:'THE JUNK LORD',color:'#b889ff'}
+  {name:'BURGER BARON',color:'#f5a449'},{name:'SODA SULTAN',color:'#70cfff'},
+  {name:'DONUT DREAD',color:'#f383b1'},{name:'PIZZA TYRANT',color:'#ffc65a'},
+  {name:'THE JUNK LORD',color:'#b889ff'},{name:'CHIPS COMMANDER',color:'#f0b34d'},
+  {name:'SHAKE MONARCH',color:'#f6a1c4'},{name:'FRIED CHICKEN CHIEF',color:'#d77b45'},
+  {name:'TACO TORNADO',color:'#f2bf55'},{name:'POPCORN OVERLORD',color:'#f6d857'}
  ];let q=bosses[(game.floor-1)%bosses.length],hp=15+game.floor*6;
- let boss={x,y,r:27,type:-1,boss:true,bossStyle:game.floor-1,hp,maxHp:hp,speed:30+game.floor*3,color:q.color,cool:.9,range:500,damage:+(1+(game.floor-1)*.3).toFixed(1),durability:game.floor*6,level:game.floor,angle:0,walk:rand(0,Math.PI*2),hit:0,dead:0,dash:0,name:q.name};game.enemies.push(boss);return boss;
+ let boss={x,y,r:27,type:-1,boss:true,bossStyle:(game.floor-1)%5,hp,maxHp:hp,speed:30+game.floor*3,color:q.color,cool:.9,range:500,damage:+(1+(game.floor-1)*.3).toFixed(1),durability:game.floor*6,level:game.floor,angle:0,walk:rand(0,Math.PI*2),hit:0,dead:0,dash:0,name:q.name};game.enemies.push(boss);return boss;
 }
 function bossVolley(e){
  let a=Math.atan2(game.player.y-e.y,game.player.x-e.x);for(let i=-1;i<=1;i++){let ang=a+i*.23;game.bullets.push({x:e.x+Math.cos(ang)*24,y:e.y+Math.sin(ang)*24,vx:Math.cos(ang)*225,vy:Math.sin(ang)*225,r:6,life:2.2,from:'e',dmg:e.damage,color:palette.orange,bossShot:true});}
@@ -258,12 +268,14 @@ const heroOptions=[
  {id:'carrot',name:'CARROT',tag:'ROOT RUNNER',color:'#ffad55'},
  {id:'apple',name:'APPLE',tag:'ORCHARD HERO',color:'#ef6563'}
 ];
-function makeNutritionQuiz(){let source=nutritionQuizBank[randi(0,nutritionQuizBank.length-1)],choices=source.choices.slice().sort(()=>Math.random()-.5);return {kind:source.kind,prompt:source.prompt,choices,correctIndex:choices.indexOf(source.correct),message:`SELECT THE CORRECT ANSWER TO UNLOCK FLOOR ${game.floor+1}`,failed:false}}
+function nutritionGateLabel(){return game.mode==='normal'&&game.floor>=game.maxFloor?'COMPLETE THE CAMPAIGN':`UNLOCK FLOOR ${game.floor+1}`}
+function makeNutritionQuiz(){let source=nutritionQuizBank[randi(0,nutritionQuizBank.length-1)],choices=source.choices.slice().sort(()=>Math.random()-.5);return {kind:source.kind,prompt:source.prompt,choices,correctIndex:choices.indexOf(source.correct),message:`SELECT THE CORRECT ANSWER TO ${nutritionGateLabel()}`,failed:false}}
+function completeNormalRun(){game.state='win';game.notice='THE PANTRY IS SAVED!';game.noticeT=99;game.score+=200;saveScore();sound('win')}
 function beginUpgrade(){game.state='upgrade';game.upgradeOptions=makeUpgrades();game.notice='CHOOSE A WEAPON UPGRADE';game.noticeT=99;sound('clear')}
 function answerNutritionQuiz(index){
  let q=game.quiz;if(game.state!=='quiz'||!q||index<0||index>=q.choices.length)return;
- if(index===q.correctIndex){sound('correct');game.nutritionQuizFloor=game.floor;game.score+=100;game.notice='CORRECT! NUTRITION CHECK PASSED · +100 SCORE';game.noticeT=3;if(game.floor===1&&!game.characterChosen){game.state='character';}else beginUpgrade()}
- else {sound('wrong');q.failed=true;q.message=`INCORRECT — FLOOR ${game.floor+1} IS LOCKED. TRY AGAIN.`;game.shake=6;}
+ if(index===q.correctIndex){sound('correct');game.nutritionQuizFloor=game.floor;game.score+=100;game.notice='CORRECT! NUTRITION CHECK PASSED · +100 SCORE';game.noticeT=3;if(game.mode==='normal'&&game.floor>=game.maxFloor)completeNormalRun();else if(game.floor===1&&!game.characterChosen){game.state='character';}else beginUpgrade()}
+ else {sound('wrong');q.failed=true;q.message=`INCORRECT — ${nutritionGateLabel()} IS LOCKED. TRY AGAIN.`;game.shake=6;}
 }
 function chooseCharacter(index){let hero=heroOptions[index];if(game.state!=='character'||!hero)return;game.character=hero.id;game.characterChosen=true;game.notice=`${hero.name} HERO SELECTED FOR ALL REMAINING FLOORS`;game.noticeT=3;sound('pickup');beginUpgrade()}
 
@@ -277,7 +289,7 @@ function openCrate(c){if(c.open)return;c.open=true;game.drops.push({x:c.x,y:c.y,
 function collect(d){let p=game.player;if(d.kind==='heart'){p.hp=Math.min(p.maxHp,p.hp+1);game.notice='+1 HEART';}else{game.collected++;game.score+=50;game.notice=`${d.kind==='veg'?'VEGETABLE':'FRUIT'} FOUND! ${game.collected}/${game.needProduce}`;if(game.collected>=game.needProduce) game.notice='ALL PRODUCE FOUND — EXIT IS READY!';}game.noticeT=2;d.life=0;sound('pickup');emit(d.x,d.y,d.kind==='veg'?'#88e385':'#ff7a65',13,95)}
 function hasCleared(){return game.enemies.every(e=>e.dead)}
 function canExit(){return hasCleared()&&game.collected>=game.needProduce}
-function advanceFloor(){ if(!canExit())return; if(game.mode==='normal'&&game.floor>=game.maxFloor){game.state='win';game.notice='THE PANTRY IS SAVED!';game.noticeT=99;game.score+=200;saveScore();sound('win');} else if(game.nutritionQuizFloor!==game.floor){game.state='quiz';game.quiz=makeNutritionQuiz();game.notice=`NUTRITION CHECKPOINT — ANSWER TO ENTER FLOOR ${game.floor+1}`;game.noticeT=99;} else if(game.floor===1&&!game.characterChosen){game.state='character';} else beginUpgrade(); }
+function advanceFloor(){ if(!canExit())return; if(game.nutritionQuizFloor!==game.floor){game.state='quiz';game.quiz=makeNutritionQuiz();game.notice=`NUTRITION CHECKPOINT — ${nutritionGateLabel()}`;game.noticeT=99;} else if(game.mode==='normal'&&game.floor>=game.maxFloor)completeNormalRun();else if(game.floor===1&&!game.characterChosen){game.state='character';} else beginUpgrade(); }
 
 function togglePause(){
  if(game.state==='playing'){sound('pause');game.state='paused';mouse.down=false;mobileFire=false;mobileMove.x=0;mobileMove.y=0;mobileAim.active=false;}
@@ -286,6 +298,7 @@ function togglePause(){
 function toggleSound(){soundMuted=!soundMuted;if(!soundMuted)sound('resume')}
 function returnToMenu(){if(game.mode==='endless'&&(game.state==='playing'||game.state==='paused'))saveEndlessScore();mouse.down=false;mobileFire=false;mobileMove={x:0,y:0};mobileAim={x:0,y:0,active:false};for(const k in keys)keys[k]=false;game.state='title';}
 function pauseControlAt(x,y){return x>=850&&x<=974&&y>=14&&y<=72}
+function victoryMenuChoiceAt(x,y){if(x<W/2-145||x>W/2+145)return '';if(y>=522&&y<=568)return 'again';if(y>=580&&y<=626)return 'menu';return ''}
 function pauseMenuChoiceAt(x,y){if(x<W/2-145||x>W/2+145)return '';if(y>=324&&y<=374)return 'resume';if(y>=392&&y<=442)return 'sound';if(y>=460&&y<=510)return 'menu';return ''}
 function updateCamera(){if(game.mode!=='endless'||!game.player){game.camera.x=0;game.camera.y=0;return}let maxX=Math.max(0,worldCols()*T-W),maxY=Math.max(0,worldRows()*T-H),tx=clamp(game.player.x-W/2,0,maxX),ty=clamp(game.player.y-H/2,0,maxY);game.camera.x=lerp(game.camera.x,tx,.13);game.camera.y=lerp(game.camera.y,ty,.13)}
 
@@ -333,6 +346,7 @@ function drawFloor(){
  for(let y=minY;y<=maxY;y++)for(let x=minX;x<=maxX;x++){let n=tileNoise(x,y),tx=x*T,ty=y*T;if(game.map[y][x]){px(tx,ty,T,T,theme.wallDark);px(tx+2,ty+2,T-4,T-4,shade(theme.wall,-((n>>3)%8)));px(tx+4,ty+4,T-8,5,theme.edge);px(tx+4,ty+T-9,T-8,5,shade(theme.wallDark,11));px(tx+3,ty+3,4,T-6,shade(theme.wall,12));let seam=ty+18+(n%7);px(tx+7,seam,T-14,2,shade(theme.wallDark,-8));if(n%3===0)px(tx+18+(n%8),ty+9,3,5,shade(theme.wallDark,-5));if(n%5===0)px(tx+8,ty+28,5,2,shade(theme.wall,14));}else{let base=(x+y)%2?theme.floorA:theme.floorB;px(tx,ty,T,T,base);px(tx,ty,T,1,shade(theme.wallDark,16));px(tx,ty,1,T,shade(theme.wallDark,16));if(theme.grass){let gx=tx+5+(n%25),gy=ty+8+((n>>5)%24);px(gx,gy,1,5,'#73b65c');px(gx+2,gy+2,1,3,'#98ca69');if(n%9===0){px(tx+12+(n%12),ty+12+((n>>8)%14),3,3,'#e8db73');px(tx+13+(n%12),ty+11+((n>>8)%14),1,5,'#f6edaa');}}else{if(n%3===0)px(tx+6+(n%17),ty+8+((n>>5)%19),2,2,shade(base,-12));if(n%7===0){let cx=tx+9+(n%15),cy=ty+11+((n>>6)%13);px(cx,cy,7,1,shade(theme.wallDark,9));px(cx+5,cy+1,1,5,shade(theme.wallDark,9));}}}}
  for(const d of game.decor){if(!wallAt(d.x,d.y)&&d.x>=cam.x-20&&d.x<=cam.x+W+20&&d.y>=cam.y-20&&d.y<=cam.y+H+20){let c=d.type===0?shade(theme.wall,-12):d.type===1?shade(theme.wallDark,22):shade(theme.floorB,18);px(d.x-2,d.y-2,4,4,c);px(d.x-1,d.y-2,2,1,shade(c,22));}}
 }
+function drawNutritionMonthGround(){let m=game.groundMessage;if(!m)return;ctx.save();ctx.translate(m.x,m.y);ctx.rotate(-.035);ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='bold 21px ui-monospace,monospace';ctx.fillStyle='rgba(21,65,31,.65)';ctx.fillText('NUTRITION',2,2);ctx.fillText('MONTH',2,27);ctx.fillStyle='#d8ef8b';ctx.fillText('NUTRITION',0,0);ctx.fillText('MONTH',0,25);ctx.fillStyle='#79b95d';ctx.fillRect(-66,-14,10,3);ctx.fillRect(56,-14,10,3);ctx.fillStyle='#ed665d';ctx.fillRect(-51,19,5,5);ctx.fillRect(47,19,5,5);ctx.restore();}
 function drawDungeonLighting(){
  let p=game.player;ctx.save();ctx.fillStyle='rgba(3,7,18,.18)';ctx.fillRect(game.camera.x,game.camera.y,W,H);
  if(p){let g=ctx.createRadialGradient(p.x,p.y,12,p.x,p.y,245);g.addColorStop(0,'rgba(196,255,229,.19)');g.addColorStop(.38,'rgba(83,189,161,.09)');g.addColorStop(1,'rgba(83,189,161,0)');ctx.fillStyle=g;ctx.fillRect(p.x-245,p.y-245,490,490);}
@@ -421,18 +435,18 @@ function drawBossBar(){
  rect(x,y,w,28,'#0c2112');rect(x+4,y+4,w-8,20,'#2b1e37');text(`LV.${boss.level} BOSS · ${boss.name}`,x+10,y+10,10,palette.orange);text(`DMG ${boss.damage.toFixed(1)} · DUR ${boss.durability} · ${Math.max(0,Math.ceil(boss.hp))}/${boss.maxHp}`,x+w-10,y+10,9,palette.cream,'right');rect(x+10,y+17,w-20,4,'#53253e');rect(x+10,y+17,(w-20)*Math.max(0,boss.hp)/boss.maxHp,4,palette.pink);
 }
 function controlChoiceAt(x,y){let by=584,w=170,h=42,pcx=W/2-180,mobx=W/2+10;if(y>=by&&y<=by+h){if(x>=pcx&&x<=pcx+w)return'pc';if(x>=mobx&&x<=mobx+w)return'mobile'}return null}
-function drawControlChoice(){let by=584,w=170,h=42,pcx=W/2-180,mobx=W/2+10;text('CHOOSE NORMAL (5 FLOORS) OR ENDLESS, THEN CONTROLS',W/2,563,10,palette.cream,'center');rect(pcx,by,w,h,'#17391d');rect(pcx+3,by+3,w-6,h-6,'#315d35');text('PC',pcx+w/2,by+15,14,palette.lime,'center');text('KEYBOARD + MOUSE',pcx+w/2,by+31,8,palette.cream,'center');rect(mobx,by,w,h,'#17391d');rect(mobx+3,by+3,w-6,h-6,'#3b3061');text('MOBILE',mobx+w/2,by+15,14,palette.gold,'center');text('DUAL JOYSTICKS',mobx+w/2,by+31,8,palette.cream,'center');text('TAP A MODE TO START',W/2,650,11,'#c3e99b','center');}
+function drawControlChoice(){let by=584,w=170,h=42,pcx=W/2-180,mobx=W/2+10;text('CHOOSE NORMAL (10 FLOORS) OR ENDLESS, THEN CONTROLS',W/2,563,10,palette.cream,'center');rect(pcx,by,w,h,'#17391d');rect(pcx+3,by+3,w-6,h-6,'#315d35');text('PC',pcx+w/2,by+15,14,palette.lime,'center');text('KEYBOARD + MOUSE',pcx+w/2,by+31,8,palette.cream,'center');rect(mobx,by,w,h,'#17391d');rect(mobx+3,by+3,w-6,h-6,'#3b3061');text('MOBILE',mobx+w/2,by+15,14,palette.gold,'center');text('DUAL JOYSTICKS',mobx+w/2,by+31,8,palette.cream,'center');text('TAP A MODE TO START',W/2,650,11,'#c3e99b','center');}
 function drawLeaderboard(x,y,w=330){
  let endless=game.mode==='endless',rows=(endless?game.endlessLeaderboard:game.leaderboard).slice(0,4),h=rows.length?42+rows.length*21:92;rect(x,y,w,h,'#0c2112');rect(x+4,y+4,w-8,h-8,endless?'#27203f':'#17331c');text(endless?'ENDLESS HIGH SCORES':'TOP PLAYERS',x+14,y+18,14,endless?'#c8e88f':palette.gold);text(endless?'NO FINAL FLOOR':'LOCAL HALL OF FAME',x+w-14,y+18,9,'#b8db99','right');
- if(!rows.length){text(endless?'No endless runs recorded yet.':'No completed runs yet.',x+w/2,y+50,11,palette.cream,'center');text(endless?'Survive floors to claim the top spot!':'Finish Floor 5 to claim the top spot!',x+w/2,y+70,10,palette.lime,'center');return}
+ if(!rows.length){text(endless?'No endless runs recorded yet.':'No completed runs yet.',x+w/2,y+50,11,palette.cream,'center');text(endless?'Survive floors to claim the top spot!':'Finish Floor 10 to claim the top spot!',x+w/2,y+70,10,palette.lime,'center');return}
  rows.forEach((row,i)=>{let yy=y+42+i*21;text(`#${i+1}`,x+14,yy,11,i===0?(endless?'#c8e88f':palette.gold):'#c3e99b');text(row.name,x+48,yy,11,palette.cream);let suffix=endless&&row.floor?` F${row.floor}`:'';text(String(row.score).padStart(4,'0')+suffix,x+w-14,yy,11,i===0?palette.lime:palette.cream,'right')});
 }
 function quizChoiceAt(x,y){let top=300,w=200,h=126,left=W/2-330;if(y<top||y>top+h)return-1;let i=Math.floor((x-left)/220);return i>=0&&i<3&&x>=left+i*220&&x<=left+i*220+w?i:-1}
 function drawNutritionQuiz(){
- let q=game.quiz;if(!q)return;text('NUTRITION CHECKPOINT',W/2,164,35,palette.lime,'center');text(`FLOOR ${game.floor+1} IS LOCKED UNTIL YOU ANSWER CORRECTLY`,W/2,202,13,palette.gold,'center');
+ let q=game.quiz;if(!q)return;text('NUTRITION CHECKPOINT',W/2,164,35,palette.lime,'center');text(`${nutritionGateLabel()} IS LOCKED UNTIL YOU ANSWER CORRECTLY`,W/2,202,13,palette.gold,'center');
  rect(W/2-330,224,660,57,'#17391d');rect(W/2-326,228,652,49,'#263b50');text(q.kind,W/2,243,11,palette.lime,'center');text(q.prompt,W/2,263,18,palette.cream,'center');
  for(let i=0;i<q.choices.length;i++){let x=W/2-330+i*220,y=300;rect(x,y,200,126,'#17391d');rect(x+4,y+4,192,118,q.failed?'#4b2841':'#315d35');text(`${i+1}`,x+18,y+20,14,palette.gold,'center');text(q.choices[i],x+100,y+57,16,palette.cream,'center');text('CLICK / PRESS '+(i+1),x+100,y+96,10,'#c3e99b','center');}
- text(q.message,W/2,460,13,q.failed?palette.pink:palette.cream,'center');text(`A WRONG ANSWER WILL NOT LET YOU ENTER FLOOR ${game.floor+1}.`,W/2,486,11,palette.gold,'center');
+ text(q.message,W/2,460,13,q.failed?palette.pink:palette.cream,'center');text(`A WRONG ANSWER WILL NOT LET YOU ${nutritionGateLabel()}.`,W/2,486,11,palette.gold,'center');
 }
 function characterChoiceAt(x,y){let top=286,w=200,h=145,left=W/2-330;if(y<top||y>top+h)return-1;let i=Math.floor((x-left)/220);return i>=0&&i<3&&x>=left+i*220&&x<=left+i*220+w?i:-1}
 function drawCharacterSelect(){text('CHOOSE YOUR HEALTHY HERO',W/2,158,34,palette.lime,'center');text('THIS HERO WILL JOIN YOU ON EVERY REMAINING FLOOR',W/2,197,13,palette.cream,'center');for(let i=0;i<heroOptions.length;i++){let h=heroOptions[i],x=W/2-330+i*220,y=286;rect(x,y,200,145,'#17391d');rect(x+4,y+4,192,137,i===0?'#315642':'#315d35');text(`${i+1}`,x+19,y+21,14,palette.gold,'center');text(h.name,x+100,y+53,16,h.color,'center');text(h.tag,x+100,y+82,10,palette.cream,'center');text('SELECT HERO',x+100,y+116,10,'#c3e99b','center');}text('BROCCOLI IS THE DEFAULT HERO FOR FLOOR 1.',W/2,474,11,palette.gold,'center');}
@@ -444,7 +458,7 @@ function drawOverlay(){if(game.state==='playing')return;rect(0,0,W,H,'rgba(5,7,1
  else if(game.state==='upgrade'){text('FLOOR CLEARED',W/2,174,36,palette.lime,'center');text('CHOOSE ONE WEAPON UPGRADE',W/2,211,16,palette.cream,'center');for(let i=0;i<game.upgradeOptions.length;i++){let u=game.upgradeOptions[i],x=W/2-345+i*235,y=258;rect(x,y,215,177,'#17391d');rect(x+4,y+4,207,169,i===0?'#394d7d':'#263557');text(`${i+1}`,x+18,y+21,14,palette.gold,'center');text(u.name,x+107,y+55,16,palette.gold,'center');text(u.tag,x+107,y+86,13,palette.lime,'center');text(u.detail,x+107,y+115,11,palette.cream,'center');text(`PRESS ${i+1} / CLICK`,x+107,y+151,10,'#c3e99b','center');}}
  else if(game.state==='dead'&&game.mode==='endless'){let top=game.endlessLeaderboard[0],rank=game.endlessFinalRank||1;text('ENDLESS RUN ENDED',W/2,210,37,palette.pink,'center');text(`${game.playerName||'RAIDER'} · FLOOR ${game.floor} · SCORE ${game.score}`,W/2,255,15,palette.cream,'center');drawLeaderboard(W/2-165,280,330);text(`YOUR RANK: #${rank}     HIGHEST: ${top?top.name:'—'} · ${top?top.score:0}`,W/2,430,12,palette.cream,'center');text('PRESS ENTER OR CLICK FOR A NEW RUN',W/2,474,14,palette.gold,'center');}
  else if(game.state==='dead'){text('YOU GOT SERVED.',W/2,282,36,palette.pink,'center');text(`${game.playerName||'RAIDER'} · JUNK PURGED: ${game.kills}    SCORE: ${game.score}`,W/2,326,15,palette.cream,'center');text('CREDITS: JESREL JADE RUPIN',W/2,365,14,palette.gold,'center');text('PRESS ENTER OR CLICK TO RAID AGAIN',W/2,397,14,palette.gold,'center');}
- else if(game.state==='win'){let top=game.leaderboard[0],rank=game.finalRank||game.leaderboard.findIndex(row=>row.name===game.playerName&&row.score===game.score)+1;text('ALL 5 FLOORS CLEARED!',W/2,151,13,palette.gold,'center');text('PANTRY SAVED!',W/2,185,42,palette.lime,'center');text('Every greasy invader is gone. Every fresh snack is safe.',W/2,230,15,palette.cream,'center');text(`${game.playerName||'RAIDER'} · FINAL SCORE: ${game.score}`,W/2,263,19,palette.gold,'center');drawLeaderboard(W/2-165,285,330);text(`YOUR RANK: #${rank}     TOP PLAYER: ${top?top.name:'—'} · ${top?top.score:0}`,W/2,433,12,palette.cream,'center');text('CREDITS: JESREL JADE RUPIN',W/2,464,14,palette.gold,'center');text('PRESS ENTER OR CLICK FOR A NEW RUN',W/2,500,14,palette.cream,'center');}
+ else if(game.state==='win'){let top=game.leaderboard[0],rank=game.finalRank||game.leaderboard.findIndex(row=>row.name===game.playerName&&row.score===game.score)+1;text('ALL 10 FLOORS CLEARED!',W/2,132,13,palette.gold,'center');text('PANTRY SAVED!',W/2,166,42,palette.lime,'center');text('CAMPAIGN SCOREBOARD',W/2,211,13,palette.cream,'center');text(`${game.playerName||'RAIDER'} · FINAL SCORE: ${game.score}`,W/2,240,19,palette.gold,'center');drawLeaderboard(W/2-165,265,330);text(`YOUR RANK: #${rank}     TOP PLAYER: ${top?top.name:'—'} · ${top?top.score:0}`,W/2,413,12,palette.cream,'center');text('CREDITS: JESREL JADE RUPIN',W/2,442,13,palette.gold,'center');rect(W/2-145,522,290,46,'#17391d');rect(W/2-141,526,282,38,'#315d35');text('PLAY AGAIN',W/2,545,15,palette.lime,'center');rect(W/2-145,580,290,46,'#17391d');rect(W/2-141,584,282,38,'#4a653d');text('BACK TO MENU',W/2,603,15,palette.gold,'center');text('ENTER: PLAY AGAIN · M: MENU',W/2,654,10,'#c3e99b','center');}
 }
 function drawProjectile(q){
  let x=q.x,y=q.y;
@@ -456,18 +470,18 @@ function drawProjectile(q){
  else {px(x-6,y-5,12,11,ammoColors.apple);px(x-3,y-9,5,5,'#6fbd70');px(x-2,y-2,3,3,'#ffe6b3');}
 }
 function syncTouchControls(){let active=game.controlMode==='mobile'&&game.state==='playing';touchControls.classList.toggle('active',active);deviceChoice.classList.toggle('active',game.state==='title');if(!active){mobileFire=false;mobileMove.x=0;mobileMove.y=0;mobileAim.active=false;}}
-function render(){syncTouchControls();updateCamera();let sx=game.shake?rand(-game.shake,game.shake):0,sy=game.shake?rand(-game.shake,game.shake):0;ctx.save();ctx.translate(sx-game.camera.x,sy-game.camera.y);drawFloor();drawDungeonLighting();for(const tree of game.appleTrees)drawAppleTree(tree);drawExit();for(const c of game.crates)drawCrate(c);for(const c of game.upgradeChests)drawUpgradeChest(c);for(const d of game.drops)drawProduce(d);for(const e of game.enemies)if(!e.dead||e.dead>0)drawEnemy(e);for(const q of game.bullets)drawProjectile(q);for(const q of game.particles){ctx.globalAlpha=Math.max(0,q.life/q.max);px(q.x-q.size/2,q.y-q.size/2,q.size,q.size,q.color)}ctx.globalAlpha=1;drawPlayer();drawSkillNova();ctx.restore();drawAmbientMotes();drawVignette();if(game.player)drawHud();drawOverlay();}
+function render(){syncTouchControls();updateCamera();let sx=game.shake?rand(-game.shake,game.shake):0,sy=game.shake?rand(-game.shake,game.shake):0;ctx.save();ctx.translate(sx-game.camera.x,sy-game.camera.y);drawFloor();drawDungeonLighting();drawNutritionMonthGround();for(const tree of game.appleTrees)drawAppleTree(tree);drawExit();for(const c of game.crates)drawCrate(c);for(const c of game.upgradeChests)drawUpgradeChest(c);for(const d of game.drops)drawProduce(d);for(const e of game.enemies)if(!e.dead||e.dead>0)drawEnemy(e);for(const q of game.bullets)drawProjectile(q);for(const q of game.particles){ctx.globalAlpha=Math.max(0,q.life/q.max);px(q.x-q.size/2,q.y-q.size/2,q.size,q.size,q.color)}ctx.globalAlpha=1;drawPlayer();drawSkillNova();ctx.restore();drawAmbientMotes();drawVignette();if(game.player)drawHud();drawOverlay();}
 let last=performance.now();function loop(now){let dt=Math.min(.033,(now-last)/1000);last=now;update(dt);render();requestAnimationFrame(loop)}
-function start(){if(!game.controlMode)game.controlMode='pc';game.maxFloor=game.mode==='endless'?999999:5;sound('start');game.floor=1;game.score=0;game.scoreSaved=false;game.finalRank=null;game.endlessScoreSaved=false;game.endlessFinalRank=null;game.weapon={level:1,damage:1,fireRate:1,spread:1,ammoIndex:0,specialCool:0,specialMax:9,specialFlash:0};game.skill={cool:0,max:7,flash:0};game.upgradeOptions=[];game.nutritionQuizFloor=0;game.quiz=null;game.character='broccoli';game.characterChosen=false;resetFloor()}
+function start(){if(!game.controlMode)game.controlMode='pc';game.maxFloor=game.mode==='endless'?999999:10;sound('start');game.floor=1;game.score=0;game.scoreSaved=false;game.finalRank=null;game.endlessScoreSaved=false;game.endlessFinalRank=null;game.weapon={level:1,damage:1,fireRate:1,spread:1,ammoIndex:0,specialCool:0,specialMax:9,specialFlash:0};game.skill={cool:0,max:7,flash:0};game.upgradeOptions=[];game.nutritionQuizFloor=0;game.quiz=null;game.character='broccoli';game.characterChosen=false;resetFloor()}
 function canvasPoint(ev){let r=C.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height}}
 function selectRunMode(mode){game.mode=mode;game.modeChosen=true;document.querySelectorAll('[data-run-mode]').forEach(btn=>btn.classList.toggle('selected',btn.dataset.runMode===mode));document.getElementById('modeHint').classList.remove('required')}
 function chooseControlMode(mode){
  let name=playerNameInput.value.replace(/[^a-zA-Z0-9 _-]/g,'').trim().slice(0,14)||'BROCCOLI HERO';if(!game.modeChosen){selectRunMode('normal');}
  game.playerName=name.toUpperCase();playerNameInput.value=game.playerName;playerNameInput.classList.remove('required');game.controlMode=mode;mobileFire=false;mobileMove={x:0,y:0};mobileAim={x:0,y:0,active:false};start()
 }
-window.addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(k==='m'&&game.state==='paused'){e.preventDefault();toggleSound();return}if(['p','escape'].includes(k)&&(game.state==='playing'||game.state==='paused')){e.preventDefault();togglePause();return}keys[k]=true;if(['arrowup','arrowdown','arrowleft','arrowright',' ','enter'].includes(k))e.preventDefault();if(k==='enter'&&(game.state==='title'||game.state==='dead'||game.state==='win')){if(game.state==='title'){if(!game.modeChosen)selectRunMode('normal');chooseControlMode('pc')}else start()}if(game.state==='quiz'&&['1','2','3'].includes(k))answerNutritionQuiz(Number(k)-1);if(game.state==='character'&&['1','2','3'].includes(k))chooseCharacter(Number(k)-1);if(game.state==='upgrade'&&['1','2','3'].includes(k))chooseUpgrade(Number(k)-1);});
+window.addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(k==='m'&&game.state==='win'){e.preventDefault();returnToMenu();return}if(k==='m'&&game.state==='paused'){e.preventDefault();toggleSound();return}if(['p','escape'].includes(k)&&(game.state==='playing'||game.state==='paused')){e.preventDefault();togglePause();return}keys[k]=true;if(['arrowup','arrowdown','arrowleft','arrowright',' ','enter'].includes(k))e.preventDefault();if(k==='enter'&&(game.state==='title'||game.state==='dead'||game.state==='win')){if(game.state==='title'){if(!game.modeChosen)selectRunMode('normal');chooseControlMode('pc')}else start()}if(game.state==='quiz'&&['1','2','3'].includes(k))answerNutritionQuiz(Number(k)-1);if(game.state==='character'&&['1','2','3'].includes(k))chooseCharacter(Number(k)-1);if(game.state==='upgrade'&&['1','2','3'].includes(k))chooseUpgrade(Number(k)-1);});
 window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
-C.addEventListener('pointermove',e=>Object.assign(mouse,canvasPoint(e)));C.addEventListener('pointerdown',e=>{Object.assign(mouse,canvasPoint(e));if(game.state==='title'){let mode=controlChoiceAt(mouse.x,mouse.y);if(mode)chooseControlMode(mode);return}if(game.state==='paused'){let choice=pauseMenuChoiceAt(mouse.x,mouse.y);if(choice==='resume')togglePause();else if(choice==='sound')toggleSound();else if(choice==='menu')returnToMenu();return}if(game.state==='playing'&&pauseControlAt(mouse.x,mouse.y)){togglePause();return}if(game.state==='dead'||game.state==='win'){start();return}else if(game.state==='quiz'){let i=quizChoiceAt(mouse.x,mouse.y);if(i>=0)answerNutritionQuiz(i);return}else if(game.state==='character'){let i=characterChoiceAt(mouse.x,mouse.y);if(i>=0)chooseCharacter(i);return}else if(game.state==='upgrade'){let i=Math.floor((mouse.x-(W/2-345))/235);if(mouse.y>=258&&mouse.y<=435&&i>=0&&i<3&&mouse.x>=W/2-345+i*235&&mouse.x<=W/2-130+i*235)chooseUpgrade(i);return}mouse.down=true;try{C.setPointerCapture(e.pointerId)}catch(err){}});window.addEventListener('pointerup',()=>mouse.down=false);C.addEventListener('contextmenu',e=>e.preventDefault());
+C.addEventListener('pointermove',e=>Object.assign(mouse,canvasPoint(e)));C.addEventListener('pointerdown',e=>{Object.assign(mouse,canvasPoint(e));if(game.state==='title'){let mode=controlChoiceAt(mouse.x,mouse.y);if(mode)chooseControlMode(mode);return}if(game.state==='paused'){let choice=pauseMenuChoiceAt(mouse.x,mouse.y);if(choice==='resume')togglePause();else if(choice==='sound')toggleSound();else if(choice==='menu')returnToMenu();return}if(game.state==='playing'&&pauseControlAt(mouse.x,mouse.y)){togglePause();return}if(game.state==='win'){let choice=victoryMenuChoiceAt(mouse.x,mouse.y);if(choice==='menu')returnToMenu();else start();return}if(game.state==='dead'){start();return}else if(game.state==='quiz'){let i=quizChoiceAt(mouse.x,mouse.y);if(i>=0)answerNutritionQuiz(i);return}else if(game.state==='character'){let i=characterChoiceAt(mouse.x,mouse.y);if(i>=0)chooseCharacter(i);return}else if(game.state==='upgrade'){let i=Math.floor((mouse.x-(W/2-345))/235);if(mouse.y>=258&&mouse.y<=435&&i>=0&&i<3&&mouse.x>=W/2-345+i*235&&mouse.x<=W/2-130+i*235)chooseUpgrade(i);return}mouse.down=true;try{C.setPointerCapture(e.pointerId)}catch(err){}});window.addEventListener('pointerup',()=>mouse.down=false);C.addEventListener('contextmenu',e=>e.preventDefault());
 function bindVirtualStick(stick,kind){
  const knob=stick.querySelector('.stick-knob');let activeId=null;
  function setVector(e){let r=stick.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,len=Math.hypot(dx,dy)||1,scale=Math.min(1,max/len),vx=dx*scale/max,vy=dy*scale/max;knob.style.transform=`translate(calc(-50% + ${vx*max}px),calc(-50% + ${vy*max}px))`;if(kind==='move'){mobileMove.x=vx;mobileMove.y=vy}else{mobileAim={x:vx,y:vy,active:Math.hypot(vx,vy)>.12};mobileFire=mobileAim.active}}
@@ -484,11 +498,11 @@ playerNameInput.addEventListener('input',()=>{playerNameInput.classList.remove('
 function bindStartChoice(button,handler){let activate=e=>{if(e.type==='click'&&button.dataset.pointerHandled==='1'){button.dataset.pointerHandled='0';return}e.preventDefault();e.stopPropagation();handler();};button.addEventListener('pointerdown',e=>{button.dataset.pointerHandled='1';activate(e)});button.addEventListener('click',activate)}
 document.querySelectorAll('#deviceChoice [data-run-mode]').forEach(btn=>bindStartChoice(btn,()=>{if(game.state==='title')selectRunMode(btn.dataset.runMode)}));
 document.querySelectorAll('#deviceChoice [data-mode]').forEach(btn=>bindStartChoice(btn,()=>{if(game.state==='title')chooseControlMode(btn.dataset.mode)}));
-// Normal Mode is ready by default, so either PC or Mobile starts immediately.
+// Normal Mode (10 floors) is ready by default, so either PC or Mobile starts immediately.
 selectRunMode('normal');
 // Draw a dungeon behind the title immediately.
 game.leaderboard=loadScores();game.endlessLeaderboard=loadEndlessScores();game.map=makeMap();seedAmbient();let previewStart=rooms[0],previewExit=rooms[rooms.length-1];game.player={x:(previewStart.x+Math.floor(previewStart.w/2))*T+20,y:(previewStart.y+Math.floor(previewStart.h/2))*T+20,r:12,hp:6,maxHp:6};game.exit={x:(previewExit.x+Math.floor(previewExit.w/2))*T+20,y:(previewExit.y+Math.floor(previewExit.h/2))*T+20,open:false};requestAnimationFrame(loop);
 })();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1ff129d0c86651c',t:'MTc4NDg1NTcxNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2007fec4dbd924e',t:'MTc4NDg3MDY3OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
